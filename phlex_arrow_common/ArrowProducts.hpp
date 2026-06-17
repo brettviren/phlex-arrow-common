@@ -7,10 +7,8 @@
 // TableGroup.h).  An output module selects products of that type and persists
 // each via a technology package.
 
+#include "phlex_arrow_common/PhlexTypes.hpp"
 #include "phlex_arrow_common/TableGroup.hpp"
-
-#include "phlex/model/product_specification.hpp"
-#include "phlex/model/product_store.hpp"
 
 #include <string>
 #include <typeinfo>
@@ -22,13 +20,13 @@ namespace phlex_arrow {
 bool is_arrow_product(const std::type_info& type);
 
 /// The product_specifications in `store` whose product is a TableGroup.
-std::vector<phlex::experimental::product_specification>
-select_arrow_products(const phlex::experimental::product_store& store);
+std::vector<phlex_arrow::product_specification>
+select_arrow_products(const phlex_arrow::product_store& store);
 
 /// As above, restricted to products whose suffix is in `suffixes` (the
 /// module's configured subset).
-std::vector<phlex::experimental::product_specification>
-select_arrow_products(const phlex::experimental::product_store& store,
+std::vector<phlex_arrow::product_specification>
+select_arrow_products(const phlex_arrow::product_store& store,
                       const std::vector<std::string>& suffixes);
 
 }  // namespace phlex_arrow

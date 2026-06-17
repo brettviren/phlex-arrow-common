@@ -9,7 +9,7 @@
 
 namespace phlex_arrow {
 
-StructuredAddress store_structured(const phlex::experimental::product_store& store,
+StructuredAddress store_structured(const phlex_arrow::product_store& store,
                                    const std::string& product)
 {
     StructuredAddress s;
@@ -27,7 +27,7 @@ StructuredAddress store_structured(const phlex::experimental::product_store& sto
     return s;
 }
 
-std::vector<std::string> store_address(const phlex::experimental::product_store& store,
+std::vector<std::string> store_address(const phlex_arrow::product_store& store,
                                        const std::string& product)
 {
     return make_address(store_structured(store, product));

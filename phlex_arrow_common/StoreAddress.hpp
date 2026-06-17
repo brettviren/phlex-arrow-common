@@ -11,8 +11,7 @@
 // path (e.g. arrow_hdf::Address); this package does not depend on any.
 
 #include "phlex_arrow_common/CellAddress.hpp"
-
-#include "phlex/model/product_store.hpp"
+#include "phlex_arrow_common/PhlexTypes.hpp"
 
 #include <string>
 #include <vector>
@@ -22,12 +21,12 @@ namespace phlex_arrow {
 /// Structured address of a product in `store`: the (layer, number) cells from
 /// store.index() (outermost first), creator from store.source(), and the given
 /// product suffix.  A store at the job root yields no cells.
-StructuredAddress store_structured(const phlex::experimental::product_store& store,
+StructuredAddress store_structured(const phlex_arrow::product_store& store,
                                    const std::string& product);
 
 /// Convenience: the raw path components for a product in `store`
 /// (= make_address(store_structured(store, product))).
-std::vector<std::string> store_address(const phlex::experimental::product_store& store,
+std::vector<std::string> store_address(const phlex_arrow::product_store& store,
                                        const std::string& product);
 
 }  // namespace phlex_arrow
