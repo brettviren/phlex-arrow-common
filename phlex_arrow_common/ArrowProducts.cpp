@@ -7,7 +7,7 @@ namespace phlex_arrow {
 
 bool is_arrow_product(const std::type_info& type)
 {
-    return type == typeid(arrow_table_ptr);
+    return type == typeid(TableGroup);
 }
 
 std::vector<phlex::experimental::product_specification>
