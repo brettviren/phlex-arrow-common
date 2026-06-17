@@ -10,8 +10,8 @@
         "CMAKE_CXX_STANDARD": { "type": "STRING", "value": "20" },
         "CMAKE_C_COMPILER": { "type": "FILEPATH", "value": "$env{CC}" },
         "CMAKE_CXX_COMPILER": { "type": "FILEPATH", "value": "$env{CXX}" },
-        "_comment_prefix": "arrow-hdf dev install + the Spack view (Arrow/HDF5).",
-        "CMAKE_PREFIX_PATH": { "type": "PATH", "value": "/devel/ddm/install;/devel/ddm/local" }
+        "_comment_prefix": "the Spack view (Arrow, HDF5, Phlex).",
+        "CMAKE_PREFIX_PATH": { "type": "PATH", "value": "/devel/ddm/local" }
       }
     }
   ],

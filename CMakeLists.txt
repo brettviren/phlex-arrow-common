@@ -18,9 +18,10 @@ endif()
 
 add_compile_options(-Wall -Wpedantic -Werror)
 
-# Pure Arrow<->HDF5 serializer (the M-axis). Provides arrow_hdf::arrow_hdf_core
-# (Address/Hierarchy) which this package's structured addressing builds upon.
-find_package(arrow_hdf CONFIG REQUIRED)
+# Apache Arrow is the narrow-waist intermediate type (needed to identify
+# Arrow-typed products).  Note: this package does NOT depend on any specific
+# technology serializer (arrow-hdf, ...) — it deals in neutral path components
+# (std::vector<std::string>); a technology package turns those into its address.
 find_package(Arrow CONFIG REQUIRED)
 
 # Phlex: this package is Phlex-aware (product_store, data_cell_index).
@@ -48,8 +49,8 @@ endforeach()
 # ---------------------------------------------------------------------------
 # phlex_arrow_common — Phlex-aware, technology-agnostic helpers.
 #
-# - CellAddress: structured (cell/creator/product) <-> arrow_hdf::Address
-#   mapping (ddm-c3s.14), Phlex-free.
+# - CellAddress: structured (cell/creator/product) <-> path-component
+#   (std::vector<std::string>) mapping (ddm-c3s.14), dependency-free.
 # - StoreAddress: extract that structure from a Phlex product_store (ddm-c3s.2 #1).
 # Arrow-product selection and the convert-node helper (ddm-c3s.2 #2,#3) follow.
 # ---------------------------------------------------------------------------
@@ -65,7 +66,6 @@ target_include_directories(phlex_arrow_common
 )
 target_link_libraries(phlex_arrow_common
   PUBLIC
-    arrow_hdf::arrow_hdf_core
     Arrow::arrow_shared
     phlex::model
     ${PHLEX_ARROW_RUNTIME_LIBS}

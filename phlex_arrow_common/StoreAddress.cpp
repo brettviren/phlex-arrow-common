@@ -27,8 +27,8 @@ StructuredAddress store_structured(const phlex::experimental::product_store& sto
     return s;
 }
 
-arrow_hdf::Address store_address(const phlex::experimental::product_store& store,
-                                 const std::string& product)
+std::vector<std::string> store_address(const phlex::experimental::product_store& store,
+                                       const std::string& product)
 {
     return make_address(store_structured(store, product));
 }

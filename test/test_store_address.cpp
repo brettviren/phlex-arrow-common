@@ -35,9 +35,11 @@ int main()
     check(store_address(store, "frame")
               == make_address({{"run", 1}, {"event", 12}}, store.source().full(), "frame"),
           "store_address matches make_address");
-    // sanity: the cell portion of the path.
-    check(store_address(store, "frame").path().rfind("/run/1/event/12/", 0) == 0,
-          "path begins with /run/1/event/12/");
+    // sanity: the leading cell components.
+    auto comps = store_address(store, "frame");
+    check(comps.size() >= 4 && comps[0] == "run" && comps[1] == "1"
+              && comps[2] == "event" && comps[3] == "12",
+          "components begin with run,1,event,12");
 
     // Store at the job root -> no cells.
     pe::product_store jstore(job, pe::algorithm_name("job"));
