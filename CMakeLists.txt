@@ -84,3 +84,25 @@ install(DIRECTORY phlex_arrow_common/
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/phlex_arrow_common"
   FILES_MATCHING PATTERN "*.h"
 )
+
+install(EXPORT phlex_arrow_commonTargets
+  FILE phlex_arrow_commonTargets.cmake
+  NAMESPACE phlex_arrow_common::
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/phlex_arrow_common"
+)
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/phlex_arrow_commonConfigVersion.cmake"
+  VERSION "${PROJECT_VERSION}"
+  COMPATIBILITY SameMajorVersion
+)
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/phlex_arrow_commonConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/phlex_arrow_commonConfig.cmake"
+  INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/phlex_arrow_common"
+)
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/phlex_arrow_commonConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/phlex_arrow_commonConfigVersion.cmake"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/phlex_arrow_common"
+)
