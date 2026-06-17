@@ -49,6 +49,23 @@ int main()
               == make_address({}, jstore.source().full(), "meta"),
           "job-root store_address");
 
+    // --- read side: index_address from a data_cell_index + explicit creator ---
+    // A reader is handed the cell index (here `ev`) and the writer's creator.
+    auto ri = index_structured(*ev, "sigproc", "frame");
+    check((ri.cells == std::vector<Cell>{{"run", 1}, {"event", 12}}), "read cells outermost-first");
+    check(ri.creator == "sigproc" && ri.product == "frame", "read creator/product");
+
+    // The read address with the writer's creator reproduces the write address
+    // exactly — i.e. a reader rebuilds the same path the writer used.
+    check(index_address(*ev, store.source().full(), "frame") == store_address(store, "frame"),
+          "index_address reproduces store_address for the same creator");
+    // And it round-trips through parse_address.
+    check(parse_address(index_address(*ev, "sigproc", "frame")) == ri,
+          "index_address round-trips via parse_address");
+
+    // Read at the job root -> no cells.
+    check(index_structured(*job, "job", "meta").cells.empty(), "job-root index has no cells");
+
     if (fails) { std::cerr << fails << " failures\n"; return 1; }
     std::cout << "store_address OK\n";
     return 0;

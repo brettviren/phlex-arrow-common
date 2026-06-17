@@ -13,6 +13,8 @@
 #include "phlex_arrow_common/CellAddress.hpp"
 #include "phlex_arrow_common/PhlexTypes.hpp"
 
+#include "phlex/model/data_cell_index.hpp"
+
 #include <string>
 #include <vector>
 
@@ -28,6 +30,26 @@ StructuredAddress store_structured(const phlex_arrow::product_store& store,
 /// (= make_address(store_structured(store, product))).
 std::vector<std::string> store_address(const phlex_arrow::product_store& store,
                                        const std::string& product);
+
+// --- read side ------------------------------------------------------------
+//
+// A reader (a single-provider source) is invoked per data_cell_index and must
+// address the data written by some ORIGINAL creator.  Unlike the write side,
+// the creator is NOT the reader's own source() — it is the writer's creator
+// (supplied by configuration) — so it is passed explicitly here.  The cells are
+// taken from the supplied index (the same walk as store_structured uses on
+// store.index()); store_structured is the (store, store.source()) special case.
+
+/// Structured address for `product` at data-cell `index`, written by `creator`:
+/// the (layer, number) cells from `index` up to (not including) the job root
+/// (outermost first), plus `creator` and `product`.
+StructuredAddress index_structured(const phlex::data_cell_index& index,
+                                   const std::string& creator, const std::string& product);
+
+/// Convenience: the raw path components
+/// (= make_address(index_structured(index, creator, product))).
+std::vector<std::string> index_address(const phlex::data_cell_index& index,
+                                       const std::string& creator, const std::string& product);
 
 }  // namespace phlex_arrow
 
