@@ -16,3 +16,9 @@ add_executable(test_coverage_policy test_coverage_policy.cpp)
 target_link_libraries(test_coverage_policy PRIVATE phlex_arrow_common
   ${PHLEX_ARROW_RUNTIME_LIBS})
 add_test(NAME coverage_policy COMMAND test_coverage_policy)
+
+# Cell-hierarchy interpretation (ddm-c3s.15): pure std + CellAddress.
+add_executable(test_cell_hierarchy test_cell_hierarchy.cpp)
+target_link_libraries(test_cell_hierarchy PRIVATE phlex_arrow_common
+  ${PHLEX_ARROW_RUNTIME_LIBS})
+add_test(NAME cell_hierarchy COMMAND test_cell_hierarchy)
