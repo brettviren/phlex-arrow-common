@@ -7,7 +7,7 @@ serializers (e.g. `arrow-hdf`) and the thin per-technology Phlex packages.
 
 Implemented so far:
 
-- **Structured addressing** (`phlex_arrow_common/CellAddress.h`, ddm-c3s.14):
+- **Structured addressing** (`phlex_arrow_common/CellAddress.hpp`, ddm-c3s.14):
   the `(layer, number)` cells + `creator` + `product` structure, mapped to a
   neutral ordered list of **path components** (`std::vector<std::string>`).
   `make_address(...)` flattens to components; `parse_address(...)` is the
