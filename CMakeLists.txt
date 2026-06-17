@@ -21,6 +21,7 @@ add_compile_options(-Wall -Wpedantic -Werror)
 # Pure Arrow<->HDF5 serializer (the M-axis). Provides arrow_hdf::arrow_hdf_core
 # (Address/Hierarchy) which this package's structured addressing builds upon.
 find_package(arrow_hdf CONFIG REQUIRED)
+find_package(Arrow CONFIG REQUIRED)
 
 # Phlex: this package is Phlex-aware (product_store, data_cell_index).
 # phlex's exported targets reference Boost::boost and TBB but its Config does
@@ -55,6 +56,7 @@ endforeach()
 add_library(phlex_arrow_common SHARED
   phlex_arrow_common/CellAddress.cpp
   phlex_arrow_common/StoreAddress.cpp
+  phlex_arrow_common/ArrowProducts.cpp
 )
 target_include_directories(phlex_arrow_common
   PUBLIC
@@ -64,6 +66,7 @@ target_include_directories(phlex_arrow_common
 target_link_libraries(phlex_arrow_common
   PUBLIC
     arrow_hdf::arrow_hdf_core
+    Arrow::arrow_shared
     phlex::model
     ${PHLEX_ARROW_RUNTIME_LIBS}
 )
