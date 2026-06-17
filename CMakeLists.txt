@@ -58,6 +58,7 @@ add_library(phlex_arrow_common SHARED
   phlex_arrow_common/CellAddress.cpp
   phlex_arrow_common/StoreAddress.cpp
   phlex_arrow_common/ArrowProducts.cpp
+  phlex_arrow_common/CoveragePolicy.cpp
 )
 target_include_directories(phlex_arrow_common
   PUBLIC
