@@ -22,16 +22,39 @@ add_compile_options(-Wall -Wpedantic -Werror)
 # (Address/Hierarchy) which this package's structured addressing builds upon.
 find_package(arrow_hdf CONFIG REQUIRED)
 
+# Phlex: this package is Phlex-aware (product_store, data_cell_index).
+# phlex's exported targets reference Boost::boost and TBB but its Config does
+# not find_dependency them, so find them first.
+find_package(TBB REQUIRED)
+find_package(Boost REQUIRED)
+find_package(spdlog REQUIRED)
+find_package(phlex REQUIRED)
+
+# When using a Spack view, the Phlex shared libs are built with a newer GCC
+# runtime than the system compiler; link the view's libstdc++ explicitly so
+# GLIBCXX/CXXABI versioned symbols resolve (same pattern as wire-cell-arrow).
+set(PHLEX_ARROW_RUNTIME_LIBS "")
+foreach(_prefix IN LISTS CMAKE_PREFIX_PATH)
+  if(EXISTS "${_prefix}/lib/libstdc++.so.6")
+    file(REAL_PATH "${_prefix}/lib/libstdc++.so.6" _stdc_real)
+    get_filename_component(_stdc_dir "${_stdc_real}" DIRECTORY)
+    set(PHLEX_ARROW_RUNTIME_LIBS "${_stdc_real}")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -Wl,-rpath,${_stdc_dir}")
+    break()
+  endif()
+endforeach()
+
 # ---------------------------------------------------------------------------
 # phlex_arrow_common — Phlex-aware, technology-agnostic helpers.
 #
-# Currently: the structured (cell/creator/product) <-> arrow_hdf::Address
-# mapping (ddm-c3s.14).  Store->Address extraction from a Phlex product_store,
-# Arrow-product selection, and the convert-node helper (ddm-c3s.2) will be
-# added here and will pull in Phlex.
+# - CellAddress: structured (cell/creator/product) <-> arrow_hdf::Address
+#   mapping (ddm-c3s.14), Phlex-free.
+# - StoreAddress: extract that structure from a Phlex product_store (ddm-c3s.2 #1).
+# Arrow-product selection and the convert-node helper (ddm-c3s.2 #2,#3) follow.
 # ---------------------------------------------------------------------------
 add_library(phlex_arrow_common SHARED
   phlex_arrow_common/CellAddress.cpp
+  phlex_arrow_common/StoreAddress.cpp
 )
 target_include_directories(phlex_arrow_common
   PUBLIC
@@ -41,6 +64,8 @@ target_include_directories(phlex_arrow_common
 target_link_libraries(phlex_arrow_common
   PUBLIC
     arrow_hdf::arrow_hdf_core
+    phlex::model
+    ${PHLEX_ARROW_RUNTIME_LIBS}
 )
 
 enable_testing()
