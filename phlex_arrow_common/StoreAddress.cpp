@@ -1,4 +1,4 @@
-#include "phlex_arrow_common/StoreAddress.h"
+#include "phlex_arrow_common/StoreAddress.hpp"
 
 #include "phlex/model/algorithm_name.hpp"
 #include "phlex/model/data_cell_index.hpp"

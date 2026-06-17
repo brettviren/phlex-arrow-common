@@ -1,4 +1,4 @@
-#include "phlex_arrow_common/CellAddress.h"
+#include "phlex_arrow_common/CellAddress.hpp"
 
 #include <stdexcept>
 

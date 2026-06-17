@@ -10,7 +10,7 @@
 // path components.  A technology package turns the components into a concrete
 // path (e.g. arrow_hdf::Address); this package does not depend on any.
 
-#include "phlex_arrow_common/CellAddress.h"
+#include "phlex_arrow_common/CellAddress.hpp"
 
 #include "phlex/model/product_store.hpp"
 

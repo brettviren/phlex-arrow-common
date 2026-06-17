@@ -83,7 +83,7 @@ install(TARGETS phlex_arrow_common
 )
 install(DIRECTORY phlex_arrow_common/
   DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/phlex_arrow_common"
-  FILES_MATCHING PATTERN "*.h"
+  FILES_MATCHING PATTERN "*.hpp"
 )
 
 install(EXPORT phlex_arrow_commonTargets

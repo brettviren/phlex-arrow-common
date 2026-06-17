@@ -1,6 +1,6 @@
 // Unit test for Arrow-product selection (ddm-c3s.2 #2): selects TableGroup products.
-#include "phlex_arrow_common/ArrowProducts.h"
-#include "phlex_arrow_common/TableGroup.h"
+#include "phlex_arrow_common/ArrowProducts.hpp"
+#include "phlex_arrow_common/TableGroup.hpp"
 
 #include "phlex/model/data_cell_index.hpp"
 #include "phlex/model/product_store.hpp"

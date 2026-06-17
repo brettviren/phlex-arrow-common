@@ -7,7 +7,7 @@
 // TableGroup.h).  An output module selects products of that type and persists
 // each via a technology package.
 
-#include "phlex_arrow_common/TableGroup.h"
+#include "phlex_arrow_common/TableGroup.hpp"
 
 #include "phlex/model/product_specification.hpp"
 #include "phlex/model/product_store.hpp"

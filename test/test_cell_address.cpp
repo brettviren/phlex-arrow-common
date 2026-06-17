@@ -1,5 +1,5 @@
 // Unit tests for phlex_arrow structured addressing as neutral path components.
-#include "phlex_arrow_common/CellAddress.h"
+#include "phlex_arrow_common/CellAddress.hpp"
 
 #include <iostream>
 #include <stdexcept>

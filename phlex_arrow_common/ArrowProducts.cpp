@@ -1,4 +1,4 @@
-#include "phlex_arrow_common/ArrowProducts.h"
+#include "phlex_arrow_common/ArrowProducts.hpp"
 
 #include <algorithm>
 #include <string_view>

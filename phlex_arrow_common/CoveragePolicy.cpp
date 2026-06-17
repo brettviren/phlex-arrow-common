@@ -1,4 +1,4 @@
-#include "phlex_arrow_common/CoveragePolicy.h"
+#include "phlex_arrow_common/CoveragePolicy.hpp"
 
 #include <algorithm>
 #include <sstream>

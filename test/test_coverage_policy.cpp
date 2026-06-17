@@ -1,6 +1,6 @@
 // Unit test for the output coverage policy (ddm-c3s.8).
 
-#include "phlex_arrow_common/CoveragePolicy.h"
+#include "phlex_arrow_common/CoveragePolicy.hpp"
 
 #include <iostream>
 #include <stdexcept>

@@ -1,6 +1,6 @@
 // Unit test for store_address: product_store -> arrow_hdf::Address (ddm-c3s.2 #1).
-#include "phlex_arrow_common/StoreAddress.h"
-#include "phlex_arrow_common/CellAddress.h"
+#include "phlex_arrow_common/StoreAddress.hpp"
+#include "phlex_arrow_common/CellAddress.hpp"
 
 #include "phlex/model/data_cell_index.hpp"
 #include "phlex/model/product_store.hpp"
