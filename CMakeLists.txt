@@ -25,9 +25,11 @@ add_compile_options(-Wall -Wpedantic -Werror)
 find_package(Arrow CONFIG REQUIRED)
 
 # Phlex: this package is Phlex-aware (product_store, data_cell_index).
-# phlex's exported targets reference Boost::boost and TBB but its Config does
-# not find_dependency them, so find them first.
-find_package(TBB REQUIRED)
+# We link only phlex::model, whose exported interface references Boost::boost
+# and spdlog::spdlog (which in turn pulls fmt::fmt), but phlex's Config does not
+# find_dependency them, so find them first.  (TBB is referenced by other phlex
+# targets — core, utilities_int — that are not in phlex::model's link closure,
+# so it is not needed here.)
 find_package(Boost REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(phlex REQUIRED)
