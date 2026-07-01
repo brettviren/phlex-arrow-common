@@ -29,11 +29,11 @@ int main()
     auto s = store_structured(store, "frame");
     check((s.cells == std::vector<Cell>{{"run", 1}, {"event", 12}}), "cells extracted outermost-first");
     check(s.product == "frame", "product suffix");
-    check(s.creator == store.source().full(), "creator from source");
+    check(s.creator == store.source().to_string(), "creator from source");
 
     // store_address composes via make_address.
     check(store_address(store, "frame")
-              == make_address({{"run", 1}, {"event", 12}}, store.source().full(), "frame"),
+              == make_address({{"run", 1}, {"event", 12}}, store.source().to_string(), "frame"),
           "store_address matches make_address");
     // sanity: the leading cell components.
     auto comps = store_address(store, "frame");
@@ -46,7 +46,7 @@ int main()
     auto js = store_structured(jstore, "meta");
     check(js.cells.empty(), "job-root store has no cells");
     check(store_address(jstore, "meta")
-              == make_address({}, jstore.source().full(), "meta"),
+              == make_address({}, jstore.source().to_string(), "meta"),
           "job-root store_address");
 
     // --- read side: index_address from a data_cell_index + explicit creator ---
@@ -57,7 +57,7 @@ int main()
 
     // The read address with the writer's creator reproduces the write address
     // exactly — i.e. a reader rebuilds the same path the writer used.
-    check(index_address(*ev, store.source().full(), "frame") == store_address(store, "frame"),
+    check(index_address(*ev, store.source().to_string(), "frame") == store_address(store, "frame"),
           "index_address reproduces store_address for the same creator");
     // And it round-trips through parse_address.
     check(parse_address(index_address(*ev, "sigproc", "frame")) == ri,

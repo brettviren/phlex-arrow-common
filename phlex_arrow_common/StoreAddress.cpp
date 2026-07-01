@@ -45,8 +45,8 @@ StructuredAddress store_structured(const phlex_arrow::product_store& store,
     // The write-side special case: cells from store.index(), creator from the
     // store's own source().
     auto idx = store.index();
-    if (!idx) return StructuredAddress{{}, store.source().full(), product};
-    return index_structured(*idx, store.source().full(), product);
+    if (!idx) return StructuredAddress{{}, store.source().to_string(), product};
+    return index_structured(*idx, store.source().to_string(), product);
 }
 
 std::vector<std::string> store_address(const phlex_arrow::product_store& store,

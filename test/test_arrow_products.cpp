@@ -12,7 +12,6 @@
 #include <string_view>
 
 using namespace phlex_arrow;
-namespace pe = phlex::experimental;
 
 static int fails = 0;
 static void check(bool ok, const std::string& what)
@@ -22,10 +21,10 @@ static void check(bool ok, const std::string& what)
 
 int main()
 {
-    pe::product_store store(phlex::data_cell_index::job(), pe::algorithm_name("sim"));
-    store.add_product<TableGroup>(pe::product_specification("frame"), TableGroup{"wc.frame", {}});
-    store.add_product<TableGroup>(pe::product_specification("depos"), TableGroup{"wc.deposet", {}});
-    store.add_product<int>(pe::product_specification("count"), 5);
+    product_store store(phlex::data_cell_index::job(), algorithm_name("sim"));
+    store.add_product<TableGroup>(product_specification("frame"), TableGroup{"wc.frame", {}});
+    store.add_product<TableGroup>(product_specification("depos"), TableGroup{"wc.deposet", {}});
+    store.add_product<int>(product_specification("count"), 5);
 
     auto sel = select_arrow_products(store);
     check(sel.size() == 2, "two TableGroup products selected (not the int)");

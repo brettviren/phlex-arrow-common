@@ -4,7 +4,7 @@
 // Generic registration helper for Arrow convert nodes.
 //
 // Every to_arrow/from_arrow Phlex transform shares the same wiring: declare a
-// single-input single-output transform, route the input by a product_query,
+// single-input single-output transform, route the input by a product_selector,
 // and name the output product suffix.  register_convert() factors out that
 // boilerplate so a domain package (e.g. wire-cell-phlex-arrow) is reduced to a
 // list of (name, converter, query, suffix) instantiations.
@@ -15,7 +15,7 @@
 // phlex::module — so only consumers that build plugins include it.  The
 // phlex-arrow-common library itself (C++20, phlex::model only) does not.
 
-#include "phlex/core/product_query.hpp"
+#include "phlex/core/product_selector.hpp"
 #include "phlex/module.hpp"
 
 #include <string>
@@ -28,7 +28,7 @@ namespace phlex_arrow {
 /// \param m       The module graph proxy from PHLEX_REGISTER_ALGORITHMS.
 /// \param name    The transform's algorithm name.
 /// \param conv    A callable of signature `Out(In const&)` (the converter).
-/// \param input   The product_query selecting the single input product.
+/// \param input   The product_selector selecting the single input product.
 /// \param suffix  The output product suffix.
 /// \param conc    Concurrency (default serial).
 ///
@@ -37,7 +37,7 @@ template <typename Proxy, typename Conv>
 auto register_convert(Proxy& m,
                       const std::string& name,
                       Conv&& conv,
-                      phlex::product_query input,
+                      phlex::product_selector input,
                       const std::string& suffix,
                       phlex::concurrency conc = phlex::concurrency::serial)
 {
