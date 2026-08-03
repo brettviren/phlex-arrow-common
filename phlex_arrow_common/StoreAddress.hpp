@@ -21,8 +21,11 @@
 namespace phlex_arrow {
 
 /// Structured address of a product in `store`: the (layer, number) cells from
-/// store.index() (outermost first), creator from store.source(), and the given
-/// product suffix.  A store at the job root yields no cells.
+/// store.index() (outermost first), plugin/algorithm from store.source(), and
+/// the given product suffix.  The stage is normalized to kCurrentStage: phlex
+/// 0.3.2 does not expose the store's stage publicly (registration defaults it
+/// to "CURRENT"); revisit when it does.  A store at the job root yields no
+/// cells.
 StructuredAddress store_structured(const phlex_arrow::product_store& store,
                                    const std::string& product);
 
@@ -36,13 +39,16 @@ std::vector<std::string> store_address(const phlex_arrow::product_store& store,
 // A reader (a single-provider source) is invoked per data_cell_index and must
 // address the data written by some ORIGINAL creator.  Unlike the write side,
 // the creator is NOT the reader's own source() — it is the writer's creator
-// (supplied by configuration) — so it is passed explicitly here.  The cells are
-// taken from the supplied index (the same walk as store_structured uses on
-// store.index()); store_structured is the (store, store.source()) special case.
+// (supplied by configuration) — so it is passed explicitly here as the
+// conventional single string "plugin:algorithm" (split at the FIRST colon; a
+// colon-free string is taken as the plugin with algorithm "_"), with the stage
+// normalized to kCurrentStage.  The cells are taken from the supplied index
+// (the same walk as store_structured uses on store.index()); store_structured
+// is the (store, store.source()) special case.
 
-/// Structured address for `product` at data-cell `index`, written by `creator`:
-/// the (layer, number) cells from `index` up to (not including) the job root
-/// (outermost first), plus `creator` and `product`.
+/// Structured address for `product` at data-cell `index`, written by `creator`
+/// ("plugin:algorithm"): the (layer, number) cells from `index` up to (not
+/// including) the job root (outermost first), plus the product-identity tail.
 StructuredAddress index_structured(const phlex::data_cell_index& index,
                                    const std::string& creator, const std::string& product);
 

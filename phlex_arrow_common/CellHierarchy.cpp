@@ -64,7 +64,10 @@ CellHierarchy CellHierarchy::from_addresses(const std::vector<std::vector<std::s
             node = &find_or_add(*level, c);
             level = &node->children;
         }
-        ProductLoc loc{sa.creator, sa.product};
+        // ProductLoc keeps the conventional "plugin:algorithm" creator string
+        // (the config-facing form); the stage is not yet represented in the
+        // hierarchy (single CURRENT stage assumed).
+        ProductLoc loc{sa.plugin + ":" + sa.algorithm, sa.product};
         if (node) {
             node->products.push_back(std::move(loc));
         }

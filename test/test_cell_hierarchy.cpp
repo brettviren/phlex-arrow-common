@@ -21,10 +21,10 @@ int main()
     // A small file: two events under run 1 (numbers out of order), one event
     // carrying two products from two creators, plus a job-root product.
     std::vector<std::vector<std::string>> addrs{
-      make_address({{"run", 1}, {"event", 12}}, "sigproc", "frame"),
-      make_address({{"run", 1}, {"event", 3}}, "sigproc", "frame"),
-      make_address({{"run", 1}, {"event", 12}}, "sim", "deposet"),
-      make_address({}, "job", "meta"),  // root product (no cells)
+      make_address({{"run", 1}, {"event", 12}}, "CURRENT", "sigproc", "wct_frame_filter", "frame"),
+      make_address({{"run", 1}, {"event", 3}}, "CURRENT", "sigproc", "wct_frame_filter", "frame"),
+      make_address({{"run", 1}, {"event", 12}}, "CURRENT", "sim", "gen_deposet", "deposet"),
+      make_address({}, "CURRENT", "job", "boot", "meta"),  // root product (no cells)
     };
 
     auto h = CellHierarchy::from_addresses(addrs);
@@ -33,7 +33,7 @@ int main()
     check((h.layer_names == std::vector<std::string>{"run", "event"}), "layer_names per depth");
 
     // Root product.
-    check((h.root_products == std::vector<ProductLoc>{{"job", "meta"}}), "root product captured");
+    check((h.root_products == std::vector<ProductLoc>{{"job:boot", "meta"}}), "root product captured");
 
     // One top-level cell: run 1.
     check(h.cells.size() == 1 && h.cells[0].layer == "run" && h.cells[0].number == 1, "top cell run/1");
@@ -45,8 +45,8 @@ int main()
     check(evs[1].number == 12, "event 12 sorts second (numeric, not '12' < '3')");
 
     // event 3: one product; event 12: two products grouped, sorted (creator,product).
-    check((evs[0].products == std::vector<ProductLoc>{{"sigproc", "frame"}}), "event 3 product");
-    check((evs[1].products == std::vector<ProductLoc>{{"sigproc", "frame"}, {"sim", "deposet"}}),
+    check((evs[0].products == std::vector<ProductLoc>{{"sigproc:wct_frame_filter", "frame"}}), "event 3 product");
+    check((evs[1].products == std::vector<ProductLoc>{{"sigproc:wct_frame_filter", "frame"}, {"sim:gen_deposet", "deposet"}}),
           "event 12 two products grouped + sorted");
 
     // Leaf cells have no children.
@@ -56,8 +56,8 @@ int main()
     bool threw = false;
     try {
         CellHierarchy::from_addresses({
-          make_address({{"run", 1}}, "a", "x"),
-          make_address({{"crate", 1}}, "b", "y"),  // depth 0 disagrees: run vs crate
+          make_address({{"run", 1}}, "CURRENT", "a", "n", "x"),
+          make_address({{"crate", 1}}, "CURRENT", "b", "n", "y"),  // depth 0 disagrees: run vs crate
         });
     }
     catch (const std::invalid_argument&) { threw = true; }

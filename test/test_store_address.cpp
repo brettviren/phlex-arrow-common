@@ -24,16 +24,20 @@ int main()
     auto job = phlex::data_cell_index::job();
     auto run = job->make_child("run", 1);
     auto ev = run->make_child("event", 12);
-    pe::product_store store(ev, pe::algorithm_name("sigproc"));
+    pe::product_store store(ev, pe::algorithm_name(pe::identifier{"sigproc"},
+                                                   pe::identifier{"wct_frame_filter"}));
 
     auto s = store_structured(store, "frame");
     check((s.cells == std::vector<Cell>{{"run", 1}, {"event", 12}}), "cells extracted outermost-first");
     check(s.product == "frame", "product suffix");
-    check(s.creator == store.source().to_string(), "creator from source");
+    check(s.stage == std::string(kCurrentStage), "stage normalized to CURRENT");
+    check(s.plugin == "sigproc" && s.algorithm == "wct_frame_filter",
+          "plugin/algorithm from source accessors");
 
     // store_address composes via make_address.
     check(store_address(store, "frame")
-              == make_address({{"run", 1}, {"event", 12}}, store.source().to_string(), "frame"),
+              == make_address({{"run", 1}, {"event", 12}}, kCurrentStage, "sigproc",
+                              "wct_frame_filter", "frame"),
           "store_address matches make_address");
     // sanity: the leading cell components.
     auto comps = store_address(store, "frame");
@@ -45,22 +49,27 @@ int main()
     pe::product_store jstore(job, pe::algorithm_name("job"));
     auto js = store_structured(jstore, "meta");
     check(js.cells.empty(), "job-root store has no cells");
-    check(store_address(jstore, "meta")
-              == make_address({}, jstore.source().to_string(), "meta"),
-          "job-root store_address");
+    check(js.stage == std::string(kCurrentStage) && js.product == "meta",
+          "job-root product tail");
 
     // --- read side: index_address from a data_cell_index + explicit creator ---
     // A reader is handed the cell index (here `ev`) and the writer's creator.
-    auto ri = index_structured(*ev, "sigproc", "frame");
+    auto ri = index_structured(*ev, "sigproc:wct_frame_filter", "frame");
     check((ri.cells == std::vector<Cell>{{"run", 1}, {"event", 12}}), "read cells outermost-first");
-    check(ri.creator == "sigproc" && ri.product == "frame", "read creator/product");
+    check(ri.plugin == "sigproc" && ri.algorithm == "wct_frame_filter" && ri.product == "frame",
+          "read creator split into plugin/algorithm");
+    // A colon-free creator is the plugin alone.
+    check(index_structured(*ev, "input", "frame").plugin == "input"
+              && index_structured(*ev, "input", "frame").algorithm == std::string(kEmptyPart),
+          "colon-free creator");
 
     // The read address with the writer's creator reproduces the write address
     // exactly — i.e. a reader rebuilds the same path the writer used.
-    check(index_address(*ev, store.source().to_string(), "frame") == store_address(store, "frame"),
+    check(index_address(*ev, "sigproc:wct_frame_filter", "frame")
+              == store_address(store, "frame"),
           "index_address reproduces store_address for the same creator");
     // And it round-trips through parse_address.
-    check(parse_address(index_address(*ev, "sigproc", "frame")) == ri,
+    check(parse_address(index_address(*ev, "sigproc:wct_frame_filter", "frame")) == ri,
           "index_address round-trips via parse_address");
 
     // Read at the job root -> no cells.

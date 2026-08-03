@@ -17,31 +17,43 @@ static void check(bool ok, const std::string& what)
 
 int main()
 {
-    // make_address flattens to ordered components.
-    check(make_address({{"run", 3}, {"event", 12}}, "sigproc", "frame")
-              == V{"run", "3", "event", "12", "sigproc", "frame"}, "make_address components");
+    // make_address flattens to ordered components: the fixed 4-part
+    // stage/plugin/algorithm/product tail follows the cell pairs.
+    check(make_address({{"run", 3}, {"event", 12}}, "CURRENT", "sigproc", "wct_frame_filter",
+                       "frame")
+              == V{"run", "3", "event", "12", "CURRENT", "sigproc", "wct_frame_filter", "frame"},
+          "make_address components");
     // job-root (no cells).
-    check(make_address({}, "job", "meta") == V{"job", "meta"}, "root components");
+    check(make_address({}, "CURRENT", "job", "boot", "meta")
+              == V{"CURRENT", "job", "boot", "meta"}, "root components");
+    // empty-part normalization: stage -> kCurrentStage, others -> kEmptyPart.
+    check(make_address({}, "", "p", "", "") == V{kCurrentStage, "p", kEmptyPart, kEmptyPart},
+          "empty parts normalized");
     // components are RAW — phlex-arrow-common does NO escaping (that's the tech package's job).
-    check(make_address({{"a/b", 5}}, "cr e", "p/q") == V{"a/b", "5", "cr e", "p/q"},
+    check(make_address({{"a/b", 5}}, "s t", "cr e", "al g", "p/q")
+              == V{"a/b", "5", "s t", "cr e", "al g", "p/q"},
           "components are raw, not escaped");
 
     // round-trip make -> parse.
     for (const StructuredAddress& s : {
-             StructuredAddress{{{"run", 3}, {"event", 12}}, "sigproc", "frame"},
-             StructuredAddress{{}, "job", "meta"},
-             StructuredAddress{{{"run", 1000000000000LL}}, "c", "p"},
-             StructuredAddress{{{"a/b", 5}}, "cr e", "p/q"},
+             StructuredAddress{{{"run", 3}, {"event", 12}}, "CURRENT", "sigproc",
+                               "wct_frame_filter", "frame"},
+             StructuredAddress{{}, "CURRENT", "job", "boot", "meta"},
+             StructuredAddress{{{"run", 1000000000000LL}}, "S", "c", "a", "p"},
+             StructuredAddress{{{"a/b", 5}}, "s t", "cr e", "al g", "p/q"},
          }) {
         check(parse_address(make_address(s)) == s, "round-trip");
     }
 
     // parse error cases.
-    try { parse_address(V{"only"}); check(false, "need creator+product"); }
+    try { parse_address(V{"s", "c", "p"}); check(false, "need 4-part tail"); }
     catch (const std::invalid_argument&) {}
-    try { parse_address(V{"run", "3", "event", "creator", "product"}); check(false, "unpaired cells"); }
+    try {
+        parse_address(V{"run", "3", "event", "stage", "creator", "algo", "product"});
+        check(false, "unpaired cells");
+    }
     catch (const std::invalid_argument&) {}
-    try { parse_address(V{"run", "notanum", "c", "p"}); check(false, "bad number"); }
+    try { parse_address(V{"run", "notanum", "s", "c", "a", "p"}); check(false, "bad number"); }
     catch (const std::invalid_argument&) {}
 
     if (fails) { std::cerr << fails << " failures\n"; return 1; }

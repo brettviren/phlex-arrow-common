@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <string_view>
+#include <tuple>
 
 namespace phlex_arrow {
 
@@ -13,7 +14,8 @@ StructuredAddress index_structured(const phlex::data_cell_index& index,
                                    const std::string& creator, const std::string& product)
 {
     StructuredAddress s;
-    s.creator = creator;
+    s.stage = kCurrentStage;
+    std::tie(s.plugin, s.algorithm) = split_creator(creator);
     s.product = product;
 
     auto push = [&s](const phlex::data_cell_index& idx) {
@@ -44,9 +46,24 @@ StructuredAddress store_structured(const phlex_arrow::product_store& store,
 {
     // The write-side special case: cells from store.index(), creator from the
     // store's own source().
+    const auto& source = store.source();
+    const auto plugin = std::string(static_cast<std::string_view>(source.plugin()));
+    const auto algorithm = std::string(static_cast<std::string_view>(source.algorithm()));
+
     auto idx = store.index();
-    if (!idx) return StructuredAddress{{}, store.source().to_string(), product};
-    return index_structured(*idx, store.source().to_string(), product);
+    StructuredAddress s;
+    if (idx) {
+        s = index_structured(*idx, plugin + ":" + algorithm, product);
+    }
+    else {
+        s.stage = kCurrentStage;
+        s.product = product;
+    }
+    // Set directly from the accessors (a plugin label could itself contain a
+    // colon; the split above is only for the config-string convenience form).
+    s.plugin = plugin;
+    s.algorithm = algorithm;
+    return s;
 }
 
 std::vector<std::string> store_address(const phlex_arrow::product_store& store,

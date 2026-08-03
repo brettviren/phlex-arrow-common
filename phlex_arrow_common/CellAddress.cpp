@@ -4,31 +4,50 @@
 
 namespace phlex_arrow {
 
-std::vector<std::string> make_address(const std::vector<Cell>& cells,
-                                      const std::string& creator, const std::string& product)
+std::vector<std::string> make_address(const std::vector<Cell>& cells, const std::string& stage,
+                                      const std::string& plugin, const std::string& algorithm,
+                                      const std::string& product)
 {
     std::vector<std::string> components;
-    components.reserve(cells.size() * 2 + 2);
+    components.reserve(cells.size() * 2 + 4);
     for (const auto& c : cells) {
         components.push_back(c.layer);
         components.push_back(std::to_string(c.number));
     }
-    components.push_back(creator);
-    components.push_back(product);
+    components.push_back(stage.empty() ? kCurrentStage : stage);
+    components.push_back(plugin.empty() ? kEmptyPart : plugin);
+    components.push_back(algorithm.empty() ? kEmptyPart : algorithm);
+    components.push_back(product.empty() ? kEmptyPart : product);
     return components;
 }
 
 std::vector<std::string> make_address(const StructuredAddress& addr)
 {
-    return make_address(addr.cells, addr.creator, addr.product);
+    return make_address(addr.cells, addr.stage, addr.plugin, addr.algorithm, addr.product);
+}
+
+std::pair<std::string, std::string> split_creator(const std::string& creator)
+{
+    const auto colon = creator.find(':');
+    if (colon == std::string::npos) {
+        return {creator, kEmptyPart};
+    }
+    return {creator.substr(0, colon), creator.substr(colon + 1)};
+}
+
+std::string canonical_creator(const std::string& creator)
+{
+    auto [plugin, algorithm] = split_creator(creator);
+    return plugin + ":" + algorithm;
 }
 
 StructuredAddress parse_address(const std::vector<std::string>& components)
 {
-    if (components.size() < 2) {
-        throw std::invalid_argument("parse_address: need at least creator and product");
+    if (components.size() < 4) {
+        throw std::invalid_argument(
+            "parse_address: need at least stage, plugin, algorithm and product");
     }
-    const std::size_t ncells = components.size() - 2;
+    const std::size_t ncells = components.size() - 4;
     if (ncells % 2 != 0) {
         throw std::invalid_argument("parse_address: cell components not paired");
     }
@@ -45,7 +64,9 @@ StructuredAddress parse_address(const std::vector<std::string>& components)
         }
         out.cells.push_back(Cell{components[i], number});
     }
-    out.creator = components[components.size() - 2];
+    out.stage = components[components.size() - 4];
+    out.plugin = components[components.size() - 3];
+    out.algorithm = components[components.size() - 2];
     out.product = components[components.size() - 1];
     return out;
 }
