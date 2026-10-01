@@ -21,7 +21,10 @@ static void check(bool ok, const std::string& what)
 
 int main()
 {
-    product_store store(phlex::data_cell_index::job(), algorithm_name("sim"));
+    // Phlex 0.4: a product_store refers to (does not own) its creator and stage.
+    const algorithm_name creator("sim");
+    const identifier stage{"sim"};
+    product_store store(phlex::data_cell_index::job(), &creator, &stage);
     store.add_product<TableGroup>(product_specification("frame"), TableGroup{"wc.frame", {}});
     store.add_product<TableGroup>(product_specification("depos"), TableGroup{"wc.deposet", {}});
     store.add_product<int>(product_specification("count"), 5);

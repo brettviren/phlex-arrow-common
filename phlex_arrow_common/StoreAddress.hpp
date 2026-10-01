@@ -22,9 +22,12 @@ namespace phlex_arrow {
 
 /// Structured address of a product in `store`: the (layer, number) cells from
 /// store.index() (outermost first), plugin/algorithm from store.source(), and
-/// the given product suffix.  The stage is normalized to kCurrentStage: phlex
-/// 0.3.2 does not expose the store's stage publicly (registration defaults it
-/// to "CURRENT"); revisit when it does.  A store at the job root yields no
+/// the given product suffix.  The stage is normalized to kCurrentStage.  (phlex
+/// 0.3.2 did not expose the store's stage; 0.4 does, via product_store::stage(),
+/// but the on-disk address scheme still records "CURRENT" so files written
+/// before and after the 0.4 port stay mutually readable.  Carrying the real
+/// stage would need the reader side, index_structured(), to be told the stage
+/// too -- a deliberate address-scheme change, not done in the port.)  A store at the job root yields no
 /// cells.
 StructuredAddress store_structured(const phlex_arrow::product_store& store,
                                    const std::string& product);

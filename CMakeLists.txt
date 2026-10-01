@@ -25,14 +25,11 @@ add_compile_options(-Wall -Wpedantic -Werror)
 find_package(Arrow CONFIG REQUIRED)
 
 # Phlex: this package is Phlex-aware (product_store, data_cell_index).
-# We link only phlex::model, whose exported interface references Boost::boost
-# and spdlog::spdlog (which in turn pulls fmt::fmt), but phlex's Config does not
-# find_dependency them, so find them first.  (TBB is referenced by other phlex
-# targets — core, utilities_int — that are not in phlex::model's link closure,
-# so it is not needed here.)
-find_package(Boost REQUIRED)
-find_package(spdlog REQUIRED)
-find_package(phlex REQUIRED)
+# Phlex >= 0.4.1 is required: its model types moved namespaces in 0.4 (see
+# PhlexTypes.hpp), and its CMake config now find_dependency()s its own
+# dependencies (Boost, TBB, fmt, spdlog, Microsoft.GSL), so no pre-finding is
+# needed here.
+find_package(phlex 0.4.1 REQUIRED)
 
 # When using a Spack view, the Phlex shared libs are built with a newer GCC
 # runtime than the system compiler; link the view's libstdc++ explicitly so

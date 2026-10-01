@@ -15,8 +15,7 @@
 // phlex::module — so only consumers that build plugins include it.  The
 // phlex-arrow-common library itself (C++20, phlex::model only) does not.
 
-#include "phlex/core/product_selector.hpp"
-#include "phlex/module.hpp"
+#include "phlex/module.hpp"  // also provides phlex::product_selector
 
 #include <string>
 #include <utility>

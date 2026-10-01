@@ -1,28 +1,32 @@
 #ifndef PHLEX_ARROW_COMMON_PHLEXTYPES_HPP
 #define PHLEX_ARROW_COMMON_PHLEXTYPES_HPP
 
-// Single point of dependency on Phlex's "verboten" model types.
+// Single point of dependency on Phlex's non-stable model types.
 //
-// The Phlex 0.3.0 guidance is that any interface whose name contains
-// `experimental`, `internal`, or `detail` should not be used directly.  But
-// 0.3.0's "Rationalize namespaces" work did NOT promote these core model types
-// into the stable top-level `phlex::` namespace — it only shuffled them BETWEEN
-// the verboten namespaces, and provides no top-level alias for any of them:
+// Phlex has three namespace tiers: `phlex::` (stable), `phlex::experimental::`
+// (public but "may change before it is promoted to the stable phlex
+// namespace"), and `phlex::detail::` / `internal` (private).
 //
-//   * product_store, algorithm_name, identifier  -> still phlex::experimental
-//   * product_specification                      -> moved to phlex::detail
+// As of Phlex 0.4.1 the model types this package needs are all in the
+// experimental tier; none is in `phlex::detail` any more:
 //
-// We therefore cannot avoid the verboten spelling without losing the types.
-// Aliasing them here confines that unavoidable dependency to this one header:
-// the next namespace move (e.g. experimental/detail -> stable) is a one-file
-// edit instead of a sweep across every phlex-arrow-* package.
+//   * product_store, algorithm_name, identifier  -> phlex::experimental
+//   * product_specification                      -> phlex::experimental
+//     (was phlex::detail in 0.3.x; moved by Phlex PR #891)
+//
+// There is no stable spelling for any of them, so they are aliased here.  That
+// confines the experimental dependency to this one header: the next namespace
+// move (experimental -> stable) is a one-file edit instead of a sweep across
+// every phlex-arrow-* package.  The implicit-provider (phlex::source) helpers
+// that need the experimental erased-product API live in the sibling choke
+// point PhlexSource.hpp.
 //
 // By contrast, the Phlex types we use that DO live in the stable top-level
-// `phlex` namespace — data_cell_index, product_selector (renamed from
-// product_query in 0.3.0), concurrency, handle — are used directly, not aliased.
+// `phlex` namespace -- data_cell_index, product_selector, concurrency, handle,
+// source, provider_bundle -- are used directly, not aliased.
 //
 // Usage: refer to phlex_arrow::product_store etc. instead of the
-// phlex::experimental:: / phlex::detail:: spelling.
+// phlex::experimental:: spelling.
 
 #include "phlex/model/algorithm_name.hpp"
 #include "phlex/model/identifier.hpp"
@@ -32,7 +36,7 @@
 namespace phlex_arrow {
 
 using product_store = phlex::experimental::product_store;
-using product_specification = phlex::detail::product_specification;
+using product_specification = phlex::experimental::product_specification;
 using algorithm_name = phlex::experimental::algorithm_name;
 using identifier = phlex::experimental::identifier;
 

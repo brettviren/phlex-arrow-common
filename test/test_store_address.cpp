@@ -10,7 +10,7 @@
 #include <string>
 
 using namespace phlex_arrow;
-namespace pe = phlex::experimental;
+namespace pe = phlex_arrow;  // PhlexTypes.hpp aliases (via StoreAddress.hpp)
 
 static int fails = 0;
 static void check(bool ok, const std::string& what)
@@ -24,8 +24,10 @@ int main()
     auto job = phlex::data_cell_index::job();
     auto run = job->make_child("run", 1);
     auto ev = run->make_child("event", 12);
-    pe::product_store store(ev, pe::algorithm_name(pe::identifier{"sigproc"},
-                                                   pe::identifier{"wct_frame_filter"}));
+    // Phlex 0.4: a product_store refers to (does not own) its creator and stage.
+    const pe::algorithm_name creator(pe::identifier{"sigproc"}, pe::identifier{"wct_frame_filter"});
+    const pe::identifier stage{"sim"};
+    pe::product_store store(ev, &creator, &stage);
 
     auto s = store_structured(store, "frame");
     check((s.cells == std::vector<Cell>{{"run", 1}, {"event", 12}}), "cells extracted outermost-first");
@@ -46,7 +48,8 @@ int main()
           "components begin with run,1,event,12");
 
     // Store at the job root -> no cells.
-    pe::product_store jstore(job, pe::algorithm_name("job"));
+    const pe::algorithm_name job_creator("job");
+    pe::product_store jstore(job, &job_creator, &stage);
     auto js = store_structured(jstore, "meta");
     check(js.cells.empty(), "job-root store has no cells");
     check(js.stage == std::string(kCurrentStage) && js.product == "meta",

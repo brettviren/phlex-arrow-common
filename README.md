@@ -21,10 +21,17 @@ Implemented so far:
 
 Planned: a convert-node helper for `to_arrow`/`from_arrow` transform nodes
 (ddm-c3s.2 #3, to be designed with its first consumer `wire-cell-phlex-arrow`).
-Read-side driver/provider helpers (ddm-c3s.3) are deferred until Phlex ≥ 0.3.0.
+- **Implicit-provider helper** (`phlex_arrow_common/PhlexSource.hpp`):
+  `provide_if_selected<T>(selector, creator, suffix, layer, stage, conc, read)`
+  answers a `phlex::source::create_providers()` call with the one bundle a
+  file-reading source advertises.  Consumers link `phlex::source`.
 
-Dependencies: Phlex (`product_store`, `data_cell_index`) and Apache Arrow (the
-narrow-waist intermediate). NOT any technology serializer.
+Phlex API policy: Phlex's non-stable (`phlex::experimental`) types are reached
+only through two choke-point headers, `PhlexTypes.hpp` (model type aliases) and
+`PhlexSource.hpp` (erased-product construction).  No `phlex::detail` is used.
+
+Dependencies: Phlex >= 0.4.1 (`product_store`, `data_cell_index`) and Apache
+Arrow (the narrow-waist intermediate). NOT any technology serializer.
 
 ## Build
 

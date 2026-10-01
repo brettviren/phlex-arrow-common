@@ -22,3 +22,11 @@ add_executable(test_cell_hierarchy test_cell_hierarchy.cpp)
 target_link_libraries(test_cell_hierarchy PRIVATE phlex_arrow_common
   ${PHLEX_ARROW_RUNTIME_LIBS})
 add_test(NAME cell_hierarchy COMMAND test_cell_hierarchy)
+
+# The phlex::source implicit-provider helper (PhlexSource.hpp); needs phlex's
+# C++23 source API.
+add_executable(test_phlex_source test_phlex_source.cpp)
+target_link_libraries(test_phlex_source PRIVATE phlex_arrow_common phlex::source
+  ${PHLEX_ARROW_RUNTIME_LIBS})
+set_target_properties(test_phlex_source PROPERTIES CXX_STANDARD 23)
+add_test(NAME phlex_source COMMAND test_phlex_source)
