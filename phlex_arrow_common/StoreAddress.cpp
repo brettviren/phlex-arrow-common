@@ -1,8 +1,7 @@
 #include "phlex_arrow_common/StoreAddress.hpp"
 
-#include "phlex/model/algorithm_name.hpp"
+#include "phlex_arrow_common/PhlexTypes.hpp"  // phlex model type aliases (choke point)
 #include "phlex/model/data_cell_index.hpp"
-#include "phlex/model/identifier.hpp"
 
 #include <algorithm>
 #include <string_view>

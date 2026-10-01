@@ -3,9 +3,7 @@
 #include "phlex_arrow_common/TableGroup.hpp"
 
 #include "phlex/model/data_cell_index.hpp"
-#include "phlex/model/product_store.hpp"
-#include "phlex/model/algorithm_name.hpp"
-#include "phlex/model/product_specification.hpp"
+#include "phlex_arrow_common/PhlexTypes.hpp"  // phlex model type aliases (choke point)
 
 #include <iostream>
 #include <string>
